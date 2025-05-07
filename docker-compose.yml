@@ -1,0 +1,59 @@
+services:
+  # Servicio para Nginx
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    command: /bin/sh -c "echo 'server { listen 80; server_name localhost; location / { proxy_pass http://wikijs:3000; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; proxy_set_header X-Forwarded-Proto \$scheme; } }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - wikijs
+    networks:
+      - wikinet
+
+  # Servicio para Wiki.js
+  wikijs:
+    image: requarks/wiki:latest
+    container_name: wikijs
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=wikijs-db
+      - DB_PORT=5432
+      - DB_USER=wikijs
+      - DB_PASS=wikijs
+      - DB_NAME=wikijs
+    ports:
+      - "3000:3000"
+    networks:
+      - wikinet
+
+  # Base de datos de Wiki.js (PostgreSQL)
+  wikijs-db:
+    image: postgres:alpine
+    container_name: wikijs-db
+    environment:
+      - POSTGRES_USER=wikijs
+      - POSTGRES_PASSWORD=wikijs
+      - POSTGRES_DB=wikijs
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - wikinet
+
+  # Opcional: servicio para Certbot (si quieres manejar certificados SSL automáticamente)
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/etc:/etc/letsencrypt
+      - ./certbot/lib:/var/lib/letsencrypt
+      - ./certbot/log:/var/log/letsencrypt
+      - ./nginx:/var/www/certbot
+    networks:
+      - wikinet
+    entrypoint: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; done'"
+
+networks:
+  wikinet:
+    driver: bridge
