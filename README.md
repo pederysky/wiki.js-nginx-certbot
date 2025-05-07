@@ -1,90 +1,123 @@
 # Wiki.js con Docker, Nginx y Certbot
+
 Este repositorio contiene la configuración necesaria para desplegar una instancia de Wiki.js utilizando Docker Compose, junto con Nginx como servidor proxy inverso y PostgreSQL como base de datos.
-Estructura del proyecto
+
+## Estructura del proyecto
+
 La configuración incluye los siguientes servicios:
 
-nginx: Servidor web que actúa como proxy inverso para Wiki.js
-wikijs: La aplicación principal Wiki.js
-wikijs-db: Base de datos PostgreSQL para almacenar el contenido de Wiki.js
-certbot: Servicio opcional para la gestión de certificados SSL
+- **nginx**: Servidor web que actúa como proxy inverso para Wiki.js
+- **wikijs**: La aplicación principal Wiki.js
+- **wikijs-db**: Base de datos PostgreSQL para almacenar el contenido de Wiki.js
+- **certbot**: Servicio opcional para la gestión de certificados SSL
 
-Requisitos previos
+## Requisitos previos
 
-Un servidor con acceso público a internet (para certificados SSL)
-Puertos 80 y 443 disponibles
+- Un servidor con acceso público a internet (para certificados SSL)
+- Puertos 80 y 443 disponibles
 
-Instalación
+## Instalación
 
-Clona este repositorio:
-
-bashgit clone https://github.com/tu-usuario/tu-repo.git
+1. Clona este repositorio:
+```bash
+git clone https://github.com/tu-usuario/tu-repo.git
 cd tu-repo
+```
 
-Crea las carpetas necesarias para los volúmenes persistentes:
+2. Crea las carpetas necesarias para los volúmenes persistentes:
+```bash
+mkdir -p data certbot/etc certbot/lib certbot/log nginx
+```
 
-bashmkdir -p data certbot/etc certbot/lib certbot/log nginx
+3. Inicia los servicios:
+```bash
+docker-compose up -d
+```
 
-Inicia los servicios:
+## Acceso a Wiki.js
 
-bashdocker-compose up -d
-Acceso a Wiki.js
 Una vez que los contenedores estén en funcionamiento, puedes acceder a Wiki.js a través de:
 
-http://localhost:3000 (si accedes desde el servidor)
-http://tu-dominio.com (si has configurado un dominio)
+- http://localhost:3000 (si accedes desde el servidor)
+- http://tu-dominio.com (si has configurado un dominio)
 
 En el primer acceso, se te pedirá completar la configuración inicial de Wiki.js.
-Configuración de SSL
+
+## Configuración de SSL
+
 El archivo docker-compose incluye un servicio Certbot para gestionar certificados SSL. Para configurarlo correctamente:
 
-Detén los servicios:
+1. Detén los servicios:
+```bash
+docker-compose down
+```
 
-bashdocker-compose down
+2. Actualiza la configuración de Nginx para incluir tu dominio en lugar de "localhost"
 
-Actualiza la configuración de Nginx para incluir tu dominio en lugar de "localhost"
-Configura Certbot para obtener certificados para tu dominio:
+3. Configura Certbot para obtener certificados para tu dominio:
+```bash
+docker-compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d tu-dominio.com -d www.tu-dominio.com
+```
 
-bashdocker-compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d tu-dominio.com -d www.tu-dominio.com
+4. Actualiza nuevamente la configuración de Nginx para usar los certificados SSL
 
-Actualiza nuevamente la configuración de Nginx para usar los certificados SSL
-Reinicia los servicios:
+5. Reinicia los servicios:
+```bash
+docker-compose up -d
+```
 
-bashdocker-compose up -d
-Personalizaciones
-Cambio de credenciales de la base de datos
+## Personalizaciones
+
+### Cambio de credenciales de la base de datos
+
 Para mayor seguridad, se recomienda cambiar las credenciales predeterminadas de la base de datos. Modifica las siguientes variables en el archivo docker-compose.yml:
-yaml# En el servicio wikijs-db
+
+```yaml
+# En el servicio wikijs-db
 environment:
   - POSTGRES_USER=tu_usuario
   - POSTGRES_PASSWORD=tu_contraseña_segura
   - POSTGRES_DB=wikijs
 
-## En el servicio wikijs (para que coincidan)
+# En el servicio wikijs (para que coincidan)
 environment:
   - DB_USER=tu_usuario
   - DB_PASS=tu_contraseña_segura
-Personalización de Nginx
+```
+
+### Personalización de Nginx
+
 Si necesitas personalizar la configuración de Nginx, puedes modificar el comando en el servicio de Nginx para que apunte a un archivo de configuración personalizado montado como volumen.
-Respaldo de datos
-La base de datos PostgreSQL guarda sus datos en el directorio ./data. Para realizar copias de seguridad:
 
-Detén los servicios o asegúrate de que no hay escrituras:
+## Respaldo de datos
 
-bashdocker-compose pause wikijs wikijs-db
+La base de datos PostgreSQL guarda sus datos en el directorio `./data`. Para realizar copias de seguridad:
 
-Haz una copia de seguridad del directorio de datos:
+1. Detén los servicios o asegúrate de que no hay escrituras:
+```bash
+docker-compose pause wikijs wikijs-db
+```
 
-bashtar -czf wikijs-backup-$(date +%Y%m%d).tar.gz data/
+2. Haz una copia de seguridad del directorio de datos:
+```bash
+tar -czf wikijs-backup-$(date +%Y%m%d).tar.gz data/
+```
 
-Reanuda los servicios:
+3. Reanuda los servicios:
+```bash
+docker-compose unpause wikijs wikijs-db
+```
 
-bashdocker-compose unpause wikijs wikijs-db
-Solución de problemas
+## Solución de problemas
+
 Si encuentras problemas con la implementación, comprueba los logs de los servicios:
-bash# Ver logs de todos los servicios
+
+```bash
+# Ver logs de todos los servicios
 docker-compose logs
 
-## Ver logs de un servicio específico
+# Ver logs de un servicio específico
 docker-compose logs wikijs
 docker-compose logs nginx
 docker-compose logs wikijs-db
+```
