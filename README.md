@@ -32,8 +32,8 @@ La configuración incluye los siguientes servicios:
 
 1. Clona este repositorio:
 ```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
+git clone https://github.com/pederysky/wiki.js-nginx-certbot.git
+cd wiki.js-nginx-certbot
 ```
 
 2. Crea las carpetas necesarias para los volúmenes persistentes:
