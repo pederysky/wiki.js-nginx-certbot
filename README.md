@@ -43,7 +43,7 @@ mkdir -p data certbot/etc certbot/lib certbot/log nginx
 
 3. Inicia los servicios:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Acceso a Wiki.js
@@ -61,21 +61,21 @@ El archivo docker-compose incluye un servicio Certbot para gestionar certificado
 
 1. Detén los servicios:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 2. Actualiza la configuración de Nginx para incluir tu dominio en lugar de "localhost"
 
 3. Configura Certbot para obtener certificados para tu dominio:
 ```bash
-docker-compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d tu-dominio.com -d www.tu-dominio.com
+docker compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d tu-dominio.com -d www.tu-dominio.com
 ```
 
 4. Actualiza nuevamente la configuración de Nginx para usar los certificados SSL
 
 5. Reinicia los servicios:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Personalizaciones
@@ -87,14 +87,14 @@ Para mayor seguridad, se recomienda cambiar las credenciales predeterminadas de 
 ```yaml
 # En el servicio wikijs-db
 environment:
-  - POSTGRES_USER=tu_usuario
-  - POSTGRES_PASSWORD=tu_contraseña_segura
+  - POSTGRES_USER=usuario
+  - POSTGRES_PASSWORD=contraseña
   - POSTGRES_DB=wikijs
 
 # En el servicio wikijs (para que coincidan)
 environment:
-  - DB_USER=tu_usuario
-  - DB_PASS=tu_contraseña_segura
+  - DB_USER=usuario
+  - DB_PASS=contraseña
 ```
 
 ### Personalización de Nginx
@@ -107,7 +107,7 @@ La base de datos PostgreSQL guarda sus datos en el directorio `./data`. Para rea
 
 1. Detén los servicios o asegúrate de que no hay escrituras:
 ```bash
-docker-compose pause wikijs wikijs-db
+docker compose pause wikijs wikijs-db
 ```
 
 2. Haz una copia de seguridad del directorio de datos:
@@ -117,7 +117,7 @@ tar -czf wikijs-backup-$(date +%Y%m%d).tar.gz data/
 
 3. Reanuda los servicios:
 ```bash
-docker-compose unpause wikijs wikijs-db
+docker compose unpause wikijs wikijs-db
 ```
 
 ## Solución de problemas
@@ -126,10 +126,10 @@ Si encuentras problemas con la implementación, comprueba los logs de los servic
 
 ```bash
 # Ver logs de todos los servicios
-docker-compose logs
+docker compose logs
 
 # Ver logs de un servicio específico
-docker-compose logs wikijs
-docker-compose logs nginx
-docker-compose logs wikijs-db
+docker compose logs wikijs
+docker compose logs nginx
+docker compose logs wikijs-db
 ```
