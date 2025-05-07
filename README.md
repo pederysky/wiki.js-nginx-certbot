@@ -1,4 +1,4 @@
-Wiki.js con Docker, Nginx y Certbot
+# Wiki.js con Docker, Nginx y Certbot
 Este repositorio contiene la configuración necesaria para desplegar una instancia de Wiki.js utilizando Docker Compose, junto con Nginx como servidor proxy inverso y PostgreSQL como base de datos.
 Estructura del proyecto
 La configuración incluye los siguientes servicios:
@@ -61,7 +61,7 @@ environment:
   - POSTGRES_PASSWORD=tu_contraseña_segura
   - POSTGRES_DB=wikijs
 
-# En el servicio wikijs (para que coincidan)
+## En el servicio wikijs (para que coincidan)
 environment:
   - DB_USER=tu_usuario
   - DB_PASS=tu_contraseña_segura
@@ -86,7 +86,7 @@ Si encuentras problemas con la implementación, comprueba los logs de los servic
 bash# Ver logs de todos los servicios
 docker-compose logs
 
-# Ver logs de un servicio específico
+## Ver logs de un servicio específico
 docker-compose logs wikijs
 docker-compose logs nginx
 docker-compose logs wikijs-db
