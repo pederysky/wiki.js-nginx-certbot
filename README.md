@@ -10,8 +10,6 @@ certbot: Servicio opcional para la gestión de certificados SSL
 
 Requisitos previos
 
-Docker Engine (versión 19.03.0+)
-Docker Compose (versión 1.27.0+)
 Un servidor con acceso público a internet (para certificados SSL)
 Puertos 80 y 443 disponibles
 
