@@ -2,6 +2,18 @@
 
 Este repositorio contiene la configuración necesaria para desplegar una instancia de Wiki.js utilizando Docker Compose, junto con Nginx como servidor proxy inverso y PostgreSQL como base de datos.
 
+## ¿Qué es Wiki.js?
+Wiki.js es una potente plataforma wiki de código abierto, moderna y elegante, desarrollada con Node.js. Permite la creación y gestión colaborativa de documentación, bases de conocimiento y contenido estructurado.
+
+## Acerca de este proyecto
+Este repositorio proporciona una configuración Docker completa para desplegar Wiki.js en un entorno de producción con:
+
+- **Wiki.js**: La aplicación principal para gestionar tu contenido wiki
+- **Nginx**: Servidor web que actúa como proxy inverso, mejorando la seguridad y rendimiento
+- **PostgreSQL**: Base de datos robusta para almacenar todo el contenido
+- **Certbot**: Gestión automatizada de certificados SSL para garantizar conexiones seguras
+
+Esta configuración permite desplegar rápidamente una plataforma de documentación colaborativa completa, segura y escalable para equipos, organizaciones o proyectos de cualquier tamaño.
 ## Estructura del proyecto
 
 La configuración incluye los siguientes servicios:
